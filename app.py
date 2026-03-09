@@ -194,13 +194,13 @@ def metric_card(title, value, subtitle=""):
     )
 
 # HEADER
-c1, c2 = st.columns([6,3])
+c1, c2 = st.columns([6,2])
 
 with c1:
     st.title("Sellout")
 
 with c2:
-    st.image("Logo.png", width=160)
+    st.image("Logo.png", width=200)
 
 # LOGIN
 # =========================
