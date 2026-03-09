@@ -268,9 +268,19 @@ df["marca"] = df["marca"].fillna("SEM MARCA").astype(str).str.strip().str.title(
 df["descricao"] = df["descricao"].fillna("").astype(str).str.strip()
 df["PLATAFORMA"] = df["PLATAFORMA"].fillna("").astype(str).str.strip().str.title()
 
-if email.endswith("@gruposandrini.com.br") or email.endswith("@gruposandrini.com"):
-    pass 
+# =========================
+# IDENTIFICAR TIPO DE USUÁRIO
+# =========================
+usuario_interno = (
+    email.endswith("@gruposandrini.com.br")
+    or email.endswith("@gruposandrini.com")
+)
 
+# =========================
+# CONTROLE DE ACESSO
+# =========================
+if usuario_interno:
+    pass
 else:
     marca_permitida = ACESSOS_MARCA.get(email)
 
@@ -279,8 +289,13 @@ else:
         st.stop()
 
     df = df[df["marca"].str.lower() == marca_permitida.lower()]
+# =========================
 # FILTROS
-f1, f2, f3 = st.columns(3)
+# =========================
+if usuario_interno:
+    f1, f2, f3 = st.columns(3)
+else:
+    f1, f3 = st.columns(2)
 
 marcas = sorted(df["marca"].dropna().unique())
 
@@ -292,19 +307,21 @@ df_temp = df.copy()
 if marca_sel:
     df_temp = df_temp[df_temp["marca"].isin(marca_sel)]
 
+if usuario_interno:
+    plataformas = sorted(df_temp["PLATAFORMA"].dropna().unique())
 
-plataformas = sorted(df_temp["PLATAFORMA"].dropna().unique())
+    with f2:
+        plataforma_sel = st.multiselect("Plataforma", plataformas)
 
-with f2:
-    plataforma_sel = st.multiselect("Plataforma", plataformas)
+    if plataforma_sel:
+        df_temp = df_temp[df_temp["PLATAFORMA"].isin(plataforma_sel)]
+else:
+    plataforma_sel = []
 
-if plataforma_sel:
-    df_temp = df_temp[df_temp["PLATAFORMA"].isin(plataforma_sel)]
-
-skus = sorted(df_temp["descricao"].dropna().unique())
+skus = sorted(df_temp["SKU_SENIOR"].dropna().unique())
 
 with f3:
-    sku_sel = st.multiselect("Descrição", skus)
+    sku_sel = st.multiselect("SKU Sênior", skus)
 
 df_filtrado = df.copy()
 
@@ -383,42 +400,43 @@ with k4:
 st.markdown('<div class="row-gap"></div>', unsafe_allow_html=True)
 
 # GRÁFICOS
-g1, g2 = st.columns([2, 2])
+if usuario_interno:
+    g1, g2 = st.columns(2)
 
-with g1:
-    st.subheader("Vendas por Plataforma")
+    with g1:
+        st.subheader("Vendas por Plataforma")
 
-    graf_plataforma = (
-        df_filtrado.groupby("PLATAFORMA", as_index=False)["VENDAS_GERAL"]
-        .sum()
-        .sort_values("VENDAS_GERAL", ascending=False)
-    )
-
-    if graf_plataforma.empty:
-        st.info("Sem dados para exibir.")
-    else:
-        st.bar_chart(
-            graf_plataforma.set_index("PLATAFORMA")["VENDAS_GERAL"],
-            use_container_width=True
+        graf_plataforma = (
+            df_filtrado.groupby("PLATAFORMA", as_index=False)["VENDAS_GERAL"]
+            .sum()
+            .sort_values("VENDAS_GERAL", ascending=False)
         )
 
-with g2:
-    st.subheader("Top Marcas")
+        if graf_plataforma.empty:
+            st.info("Sem dados para exibir.")
+        else:
+            st.bar_chart(
+                graf_plataforma.set_index("PLATAFORMA")["VENDAS_GERAL"],
+                use_container_width=True
+            )
 
-    graf_marca = (
-        df_filtrado.groupby("marca", as_index=False)["VENDAS_GERAL"]
-        .sum()
-        .sort_values("VENDAS_GERAL", ascending=False)
-        .head(10)
-    )
+    with g2:
+        st.subheader("Top Marcas")
 
-    if graf_marca.empty:
-        st.info("Sem dados para exibir.")
-    else:
-        st.bar_chart(
-            graf_marca.set_index("marca")["VENDAS_GERAL"],
-            use_container_width=True
+        graf_marca = (
+            df_filtrado.groupby("marca", as_index=False)["VENDAS_GERAL"]
+            .sum()
+            .sort_values("VENDAS_GERAL", ascending=False)
+            .head(10)
         )
+
+        if graf_marca.empty:
+            st.info("Sem dados para exibir.")
+        else:
+            st.bar_chart(
+                graf_marca.set_index("marca")["VENDAS_GERAL"],
+                use_container_width=True
+            )
         
 st.subheader("Análise Geral")
 
