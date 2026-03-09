@@ -318,10 +318,11 @@ if usuario_interno:
 else:
     plataforma_sel = []
 
-skus = sorted(df_temp["SKU_SENIOR"].dropna().unique())
+descricoes = sorted(df_temp["descricao"].dropna().unique())
 
 with f3:
-    sku_sel = st.multiselect("SKU Sênior", skus)
+    desc_sel = st.multiselect("Descrição", descricoes)
+
 
 df_filtrado = df.copy()
 
@@ -331,8 +332,8 @@ if marca_sel:
 if plataforma_sel:
     df_filtrado = df_filtrado[df_filtrado["PLATAFORMA"].isin(plataforma_sel)]
 
-if sku_sel:
-    df_filtrado = df_filtrado[df_filtrado["SKU_SENIOR"].isin(sku_sel)]
+if desc_sel:
+    df_temp = df_temp[df_temp["descricao"].isin(desc_sel)]
 
 v30 = df_filtrado["VENDAS_GERAL"].sum()
 
@@ -410,13 +411,14 @@ if usuario_interno:
             df_filtrado.groupby("PLATAFORMA", as_index=False)["VENDAS_GERAL"]
             .sum()
             .sort_values("VENDAS_GERAL", ascending=False)
+            .rename(columns={"VENDAS_GERAL": "Vendas"})
         )
-
+        
         if graf_plataforma.empty:
             st.info("Sem dados para exibir.")
         else:
             st.bar_chart(
-                graf_plataforma.set_index("PLATAFORMA")["VENDAS_GERAL"],
+                graf_plataforma.set_index("PLATAFORMA")["Vendas"],
                 use_container_width=True
             )
 
@@ -428,28 +430,40 @@ if usuario_interno:
             .sum()
             .sort_values("VENDAS_GERAL", ascending=False)
             .head(10)
+            .rename(columns={"VENDAS_GERAL": "Vendas"})
         )
 
         if graf_marca.empty:
             st.info("Sem dados para exibir.")
         else:
             st.bar_chart(
-                graf_marca.set_index("marca")["VENDAS_GERAL"],
+                graf_marca.set_index("marca")["Vendas"],
                 use_container_width=True
             )
         
 st.subheader("Análise Geral")
 
-tabela = df_filtrado[[
-    "marca",
-    "PLATAFORMA",
-    "SKU_SENIOR",
-    "descricao",
-    "SKU_PLATAFORMA",
-    "VENDAS_GERAL",
-    "ESTOQUE_APTO",
-    "ESTOQUE_GERAL"
-]].copy()
+if usuario_interno:
+    tabela = df_filtrado[[
+        "marca",
+        "PLATAFORMA",
+        "SKU_SENIOR",
+        "descricao",
+        "SKU_PLATAFORMA",
+        "VENDAS_GERAL",
+        "ESTOQUE_APTO",
+        "ESTOQUE_GERAL"
+    ]].copy()
+
+else:
+    tabela = df_filtrado[[
+        "marca",
+        "SKU_SENIOR",
+        "descricao",
+        "VENDAS_GERAL",
+        "ESTOQUE_APTO",
+        "ESTOQUE_GERAL"
+    ]].copy()
 
 tabela = tabela.sort_values(by="VENDAS_GERAL", ascending=False)
 
@@ -464,11 +478,7 @@ tabela = tabela.rename(columns={
     "ESTOQUE_GERAL": "Estoque Geral"
 })
 
-st.dataframe(
-    tabela,
-    use_container_width=True,
-    height=650
-)
+st.dataframe(tabela, use_container_width=True, hide_index=True)
 
 csv = tabela.to_csv(index=False).encode("utf-8-sig")
 
