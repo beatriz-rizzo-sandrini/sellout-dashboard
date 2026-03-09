@@ -8,8 +8,13 @@ ACESSOS_MARCA = {
     "fornecedor3@email.com": "Adidas",
 }
 
-st.set_page_config(page_title="Sellout", layout="wide")
+SENHA_INTERNA = st.secrets["SENHA_INTERNA"]
 
+st.set_page_config(page_title="Sellout", layout="wide")
+if "email_valido" in st.session_state:
+    if st.button("Trocar acesso"):
+        del st.session_state["email_valido"]
+        st.rerun()
 # CSS
 st.markdown("""
 <style>
@@ -199,12 +204,37 @@ with c2:
 
 # LOGIN
 # =========================
-email = st.text_input("Digite seu email para acessar")
+# =========================
+# ACESSO POR EMAIL
+# =========================
 
-if not email:
-    st.stop()
+# =========================
+# ACESSO POR EMAIL
+# =========================
 
-email = email.strip().lower()
+if "email_valido" not in st.session_state:
+    email = st.text_input("Digite seu email para acessar")
+
+    if not email:
+        st.stop()
+
+    email = email.strip().lower()
+
+    # se for sandrini, exige senha
+    if "@gruposandrini.com.br" in email or "@gruposandrini.com" in email:
+        senha = st.text_input("Digite a senha interna", type="password")
+
+        if not senha:
+            st.stop()
+
+        if senha != SENHA_INTERNA:
+            st.error("Senha incorreta.")
+            st.stop()
+
+    st.session_state.email_valido = email
+
+else:
+    email = st.session_state.email_valido
 
 try:
     df = load_sellout_csv("dados.csv")
