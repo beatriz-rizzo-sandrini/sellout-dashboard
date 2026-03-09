@@ -200,7 +200,7 @@ with c1:
     st.title("Sellout")
 
 with c2:
-    st.image("Logo.png", width=120)
+    st.image("Logo.png", width=160)
 
 # LOGIN
 # =========================
