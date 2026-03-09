@@ -189,7 +189,7 @@ with c1:
     st.title("Sellout")
 
 with c2:
-    st.image("logo.png", width=120)
+    st.image("Logo.png", width=120)
 
 try:
     df = load_sellout_csv("dados.csv")
