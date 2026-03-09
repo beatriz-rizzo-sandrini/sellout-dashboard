@@ -193,15 +193,14 @@ def metric_card(title, value, subtitle=""):
         unsafe_allow_html=True
     )
 
-header_left, header_right = st.columns([8,2])
+# HEADER
+c1, c2 = st.columns([6,3])
 
-with header_left:
-    st.markdown("## Sellout")
+with c1:
+    st.title("Sellout")
 
-with header_right:
-    st.image("Logo.png", width=140)
-
-st.divider()
+with c2:
+    st.image("Logo.png", width=120)
 
 # LOGIN
 # =========================
