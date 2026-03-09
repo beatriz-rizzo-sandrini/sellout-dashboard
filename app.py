@@ -420,7 +420,7 @@ if usuario_interno:
             st.info("Sem dados para exibir.")
         else:
             st.bar_chart(
-                graf_plataforma.set_index("PLATAFORMA")["Vendas"],
+                graf_plataforma.set_index("Plataforma")["Vendas"],
                 use_container_width=True
             )
 
