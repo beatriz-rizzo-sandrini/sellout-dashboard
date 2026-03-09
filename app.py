@@ -411,8 +411,10 @@ if usuario_interno:
             df_filtrado.groupby("PLATAFORMA", as_index=False)["VENDAS_GERAL"]
             .sum()
             .sort_values("VENDAS_GERAL", ascending=False)
-            .rename(columns={"VENDAS_GERAL": "Vendas"})
-        )
+            .rename(columns={
+                "VENDAS_GERAL": "Vendas",
+                "PLATAFORMA": "Plataforma"
+            })
         
         if graf_plataforma.empty:
             st.info("Sem dados para exibir.")
@@ -430,7 +432,10 @@ if usuario_interno:
             .sum()
             .sort_values("VENDAS_GERAL", ascending=False)
             .head(10)
-            .rename(columns={"VENDAS_GERAL": "Vendas"})
+            .rename(columns={
+                "VENDAS_GERAL": "Vendas",
+                "marca": "Marca"
+            })
         )
 
         if graf_marca.empty:
