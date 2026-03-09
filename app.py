@@ -193,7 +193,25 @@ def metric_card(title, value, subtitle=""):
         unsafe_allow_html=True
     )
 
+header_left, header_right = st.columns([8,2])
+
+with header_left:
+    st.markdown("## Sellout")
+
+with header_right:
+    st.image("Logo.png", width=140)
+
+st.divider()
+
 # LOGIN
+# =========================
+# =========================
+# ACESSO POR EMAIL
+# =========================
+
+# =========================
+# ACESSO POR EMAIL
+# =========================
 
 if "email_valido" not in st.session_state:
     email = st.text_input("Digite seu email para acessar")
@@ -227,20 +245,6 @@ except Exception as e:
     st.stop()
 
 df = df[~df["PLATAFORMA"].str.contains("BUYCLOCK", case=False, na=False)]
-
-# HEADER
-header_left, header_mid, header_right = st.columns([6,3,1])
-
-with header_left:
-    st.markdown("## Sellout")
-
-with header_mid:
-    st.caption(f"Acesso: {email}")
-
-with header_right:
-    st.image("Logo.png", width=80)
-
-st.divider()
 
 # CARREGAR TABELA DE PRODUTOS
 
