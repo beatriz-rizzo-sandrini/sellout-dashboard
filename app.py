@@ -442,7 +442,7 @@ if usuario_interno:
             st.info("Sem dados para exibir.")
         else:
             st.bar_chart(
-                graf_marca.set_index("marca")["Vendas"],
+                graf_marca.set_index("Marca")["Vendas"],
                 use_container_width=True
             )
         
