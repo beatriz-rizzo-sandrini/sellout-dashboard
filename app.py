@@ -415,6 +415,7 @@ if usuario_interno:
                 "VENDAS_GERAL": "Vendas",
                 "PLATAFORMA": "Plataforma"
             })
+        )
         
         if graf_plataforma.empty:
             st.info("Sem dados para exibir.")
