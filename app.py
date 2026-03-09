@@ -234,7 +234,7 @@ df = df.merge(
 
 df = df.drop(columns=["sku_senior"])
 
-ddf["marca"] = df["marca"].fillna("SEM MARCA").astype(str).str.strip().str.title()
+df["marca"] = df["marca"].fillna("SEM MARCA").astype(str).str.strip().str.title()
 df["descricao"] = df["descricao"].fillna("").astype(str).str.strip()
 df["PLATAFORMA"] = df["PLATAFORMA"].fillna("").astype(str).str.strip().str.title()
 
