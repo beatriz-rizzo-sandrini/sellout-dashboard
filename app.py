@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+ACESSOS_MARCA = {
+    "fornecedor1@email.com": "Puma",
+    "fornecedor2@email.com": "New Balance",
+    "fornecedor3@email.com": "Adidas",
+}
+
 st.set_page_config(page_title="Sellout", layout="wide")
 
 # CSS
@@ -191,6 +197,15 @@ with c1:
 with c2:
     st.image("Logo.png", width=120)
 
+# LOGIN
+# =========================
+email = st.text_input("Digite seu email para acessar")
+
+if not email:
+    st.stop()
+
+email = email.strip().lower()
+
 try:
     df = load_sellout_csv("dados.csv")
     
@@ -219,9 +234,21 @@ df = df.merge(
 
 df = df.drop(columns=["sku_senior"])
 
-df["marca"] = df["marca"].fillna("SEM MARCA").astype(str).str.strip()
+ddf["marca"] = df["marca"].fillna("SEM MARCA").astype(str).str.strip().str.title()
 df["descricao"] = df["descricao"].fillna("").astype(str).str.strip()
+df["PLATAFORMA"] = df["PLATAFORMA"].fillna("").astype(str).str.strip().str.title()
 
+if email.endswith("@gruposandrini.com.br") or email.endswith("@gruposandrini.com"):
+    pass 
+
+else:
+    marca_permitida = ACESSOS_MARCA.get(email)
+
+    if not marca_permitida:
+        st.error("Seu email não tem permissão para acessar este dashboard.")
+        st.stop()
+
+    df = df[df["marca"].str.lower() == marca_permitida.lower()]
 # FILTROS
 f1, f2, f3 = st.columns(3)
 
